@@ -1,0 +1,7 @@
+/config/*/logs/*
+/config/*/temp/*
+/config/*/work/*
+/config/webrun/systems
+/config/webrun/webapps
+/data/*/*
+!.gitkeep

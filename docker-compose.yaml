@@ -1,4 +1,3 @@
-version: '3'
 services:
   apache:
     image: wvogt/httpd-modjk:2.4-1.2
@@ -6,9 +5,13 @@ services:
     restart: unless-stopped # no, on-failure, always, unless-stopped
     volumes:
       - ./config/apache/httpd.conf:/usr/local/apache2/conf/httpd.conf:ro
+      - ./config/apache/extra/httpd-ssl.conf:/usr/local/apache2/conf/extra/httpd-ssl.conf:ro
+      - ./config/apache/extra/httpd-default.conf:/usr/local/apache2/conf/extra/httpd-default.conf:ro
       - ./config/apache/workers.properties:/usr/local/apache2/conf/workers.properties:ro
       - ./config/apache/logs:/usr/local/apache2/logs
+      - ./config/apache/ssl:/usr/local/apache2/conf/ssl
     environment:
+      - SERVER_NAME=makerflow.com.br
       - LANGUAGE=en_US.UTF-8
       - LANG=en_US.UTF-8
       - LC_ALL=en_US.UTF-8
