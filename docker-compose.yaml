@@ -1,0 +1,135 @@
+version: '3'
+services:
+  apache:
+    image: wvogt/httpd-modjk:2.4-1.2
+    container_name: apache
+    restart: unless-stopped # no, on-failure, always, unless-stopped
+    volumes:
+      - ./config/apache/httpd.conf:/usr/local/apache2/conf/httpd.conf:ro
+      - ./config/apache/workers.properties:/usr/local/apache2/conf/workers.properties:ro
+      - ./config/apache/logs:/usr/local/apache2/logs
+    environment:
+      - LANGUAGE=en_US.UTF-8
+      - LANG=en_US.UTF-8
+      - LC_ALL=en_US.UTF-8
+      - TZ=America/Sao_Paulo
+    ports:
+      - 80:80
+      - 443:443
+    depends_on:
+      - tomcat01
+      - tomcat02
+      - tomcat03
+    networks:
+      - internal
+      - external
+
+  tomcat01:
+    image: tomcat:9-jdk8-openjdk-buster
+    container_name: tomcat01
+    hostname: tomcat01
+    restart: unless-stopped # no, on-failure, always, unless-stopped
+    volumes:
+      - ./config/webrun/config:/usr/local/tomcat/webrun/config
+      - ./config/webrun/systems:/usr/local/tomcat/webrun/systems
+      - ./config/webrun/webapps:/usr/local/tomcat/webapps
+      - ./config/tomcat01/conf:/usr/local/tomcat/conf
+      - ./config/tomcat01/logs:/usr/local/tomcat/logs
+      - ./config/tomcat01/temp:/usr/local/tomcat/temp
+      - ./config/tomcat01/work:/usr/local/tomcat/work
+    environment:
+      - JAVA_OPTS=-Dfile.encoding=UTF-8 -Xmx2048m
+      - WEBRUN_HOME=/usr/local/tomcat/webrun
+      - LANGUAGE=en_US.UTF-8
+      - LANG=en_US.UTF-8
+      - LC_ALL=en_US.UTF-8
+      - TZ=America/Sao_Paulo
+    ports:
+      - 8181:8080
+    depends_on:
+      - postgres
+    networks:
+      - internal
+      - external
+
+  tomcat02:
+    image: tomcat:9-jdk8-openjdk-buster
+    container_name: tomcat02
+    hostname: tomcat02
+    restart: unless-stopped
+    volumes:
+      - ./config/webrun/config:/usr/local/tomcat/webrun/config
+      - ./config/webrun/systems:/usr/local/tomcat/webrun/systems
+      - ./config/webrun/webapps:/usr/local/tomcat/webapps
+      - ./config/tomcat02/conf:/usr/local/tomcat/conf
+      - ./config/tomcat02/logs:/usr/local/tomcat/logs
+      - ./config/tomcat02/temp:/usr/local/tomcat/temp
+      - ./config/tomcat02/work:/usr/local/tomcat/work
+    environment:
+      - JAVA_OPTS=-Dfile.encoding=UTF-8 -Xmx2048m
+      - WEBRUN_HOME=/usr/local/tomcat/webrun
+      - LANGUAGE=en_US.UTF-8
+      - LANG=en_US.UTF-8
+      - LC_ALL=en_US.UTF-8
+      - TZ=America/Sao_Paulo
+    ports:
+      - 8282:8080
+    depends_on:
+      - postgres
+    networks:
+      - internal
+      - external
+
+  tomcat03:
+    image: tomcat:9-jdk8-openjdk-buster
+    container_name: tomcat03
+    hostname: tomcat03
+    restart: unless-stopped
+    volumes:
+      - ./config/webrun/config:/usr/local/tomcat/webrun/config
+      - ./config/webrun/systems:/usr/local/tomcat/webrun/systems
+      - ./config/webrun/webapps:/usr/local/tomcat/webapps
+      - ./config/tomcat03/conf:/usr/local/tomcat/conf
+      - ./config/tomcat03/logs:/usr/local/tomcat/logs
+      - ./config/tomcat03/temp:/usr/local/tomcat/temp
+      - ./config/tomcat03/work:/usr/local/tomcat/work
+    environment:
+      - JAVA_OPTS=-Dfile.encoding=UTF-8 -Xmx2048m
+      - WEBRUN_HOME=/usr/local/tomcat/webrun
+      - LANGUAGE=en_US.UTF-8
+      - LANG=en_US.UTF-8
+      - LC_ALL=en_US.UTF-8
+      - TZ=America/Sao_Paulo
+    ports:
+      - 8383:8080
+    depends_on:
+      - postgres
+    networks:
+      - internal
+      - external
+
+  postgres:
+    image: postgres:10
+    container_name: postgres
+    restart: unless-stopped
+    volumes:
+      - ./config/postgres/pg_hba.conf:/usr/local/share/postgresql/pg_hba.conf:rw
+      - ./config/postgres/postgresql.conf:/usr/local/share/postgresql/postgresql.conf:rw
+      - ./data/db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=LC1q2ws3f45s*@
+      - LANGUAGE=en_US.UTF-8
+      - LANG=en_US.UTF-8
+      - LC_ALL=en_US.UTF-8
+      - TZ=America/Sao_Paulo
+    ports:
+      - 5432:5432
+    networks:
+      - internal
+      - external
+
+networks:
+  internal:
+    driver: bridge
+  external:
+    external: true
